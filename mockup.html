@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PolyVote — Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            ink: '#0B0F14',
+            surface: '#121822',
+            surface2: '#1A2230',
+            edge: '#243044',
+            up: '#22C55E',
+            down: '#EF4444',
+            brand: '#7C5CFC',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: radial-gradient(1200px 600px at 80% -10%, #1a1340 0%, #0B0F14 55%); }
+    .card { backdrop-filter: blur(8px); }
+    .tab-active { background: rgba(124,92,252,.15); color: #C9BdfF; border-color: rgba(124,92,252,.5); }
+    ::-webkit-scrollbar { height: 8px; width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #243044; border-radius: 8px; }
+  </style>
+</head>
+<body class="font-sans text-slate-200 min-h-screen antialiased">
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-30 border-b border-edge/70 bg-ink/70 backdrop-blur">
+    <div class="mx-auto max-w-6xl px-4 h-16 flex items-center gap-6">
+      <div class="flex items-center gap-2 font-extrabold text-lg">
+        <span class="grid place-items-center h-8 w-8 rounded-xl bg-brand/20 text-brand">
+          <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+        </span>
+        Poly<span class="text-brand">Vote</span>
+      </div>
+      <nav id="tabs" class="hidden md:flex items-center gap-1 text-sm">
+        <button class="tab tab-active px-3 py-1.5 rounded-full border border-transparent">All</button>
+        <button class="tab px-3 py-1.5 rounded-full border border-transparent hover:bg-surface2">Politics</button>
+        <button class="tab px-3 py-1.5 rounded-full border border-transparent hover:bg-surface2">Technology</button>
+        <button class="tab px-3 py-1.5 rounded-full border border-transparent hover:bg-surface2">Sports</button>
+        <button class="tab px-3 py-1.5 rounded-full border border-transparent hover:bg-surface2">Business</button>
+        <button class="tab px-3 py-1.5 rounded-full border border-transparent hover:bg-surface2">Science</button>
+      </nav>
+      <div class="ml-auto flex items-center gap-2">
+        <button class="px-3 py-1.5 text-sm rounded-lg hover:bg-surface2">Log in</button>
+        <button class="px-3 py-1.5 text-sm rounded-lg bg-brand text-white font-medium hover:opacity-90">Sign up</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-6">
+    <!-- Sort controls -->
+    <div class="flex items-center gap-2 mb-5 text-sm">
+      <span class="text-slate-400">Sort</span>
+      <button class="px-3 py-1.5 rounded-lg bg-surface2 border border-edge">Newest</button>
+      <button class="px-3 py-1.5 rounded-lg hover:bg-surface2 border border-transparent">Most Votes</button>
+      <button class="px-3 py-1.5 rounded-lg hover:bg-surface2 border border-transparent">Most Controversial</button>
+    </div>
+
+    <!-- Feed grid -->
+    <div id="feed" class="grid sm:grid-cols-2 gap-4"></div>
+
+    <div class="flex justify-center mt-8">
+      <button class="px-5 py-2.5 rounded-xl border border-edge bg-surface/60 card hover:bg-surface2 text-sm">Load more</button>
+    </div>
+  </main>
+
+  <!-- Topic detail modal -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
+    <div class="w-full max-w-2xl rounded-2xl border border-edge bg-surface card max-h-[88vh] overflow-y-auto">
+      <div id="modalBody" class="p-6"></div>
+    </div>
+  </div>
+
+  <script>
+    const cat = {
+      Politics: 'bg-rose-500/15 text-rose-300',
+      Technology: 'bg-sky-500/15 text-sky-300',
+      Sports: 'bg-emerald-500/15 text-emerald-300',
+      Business: 'bg-amber-500/15 text-amber-300',
+      Entertainment: 'bg-fuchsia-500/15 text-fuchsia-300',
+      Science: 'bg-violet-500/15 text-violet-300',
+    };
+
+    const topics = [
+      { id:1, category:'Politics', source:'BBC', age:'2h ago', title:'Senate passes sweeping infrastructure bill after late-night debate', up:124, down:18, comments:23, summary:'Lawmakers reached a bipartisan deal funding roads, broadband, and clean energy projects over the next decade.' },
+      { id:2, category:'Technology', source:'TechCrunch', age:'4h ago', title:'Startup unveils AI chip claiming 3x efficiency over current leaders', up:88, down:41, comments:12, summary:'The company says its new architecture slashes inference costs, but analysts urge caution until independent benchmarks land.' },
+      { id:3, category:'Sports', source:'ESPN', age:'1h ago', title:'Underdogs clinch playoff spot with stunning overtime victory', up:201, down:9, comments:47, summary:'A buzzer-beater sealed an improbable run that few predicted at the start of the season.' },
+      { id:4, category:'Business', source:'Reuters', age:'6h ago', title:'Markets rally as inflation cools more than expected', up:64, down:55, comments:31, summary:'Investors cheered the latest data, though economists remain divided on the path of future rate cuts.' },
+      { id:5, category:'Science', source:'Nature', age:'8h ago', title:'Telescope captures sharpest image yet of a forming planetary system', up:312, down:6, comments:58, summary:'Researchers say the observations could reshape models of how planets coalesce from cosmic dust.' },
+      { id:6, category:'Entertainment', source:'Variety', age:'3h ago', title:'Surprise album drop breaks first-day streaming records', up:140, down:73, comments:64, summary:'Fans flooded platforms within minutes, pushing servers and charts to new highs.' },
+    ];
+
+    const pct = t => Math.round((t.up / (t.up + t.down)) * 100);
+
+    function voteBar(t, big=false) {
+      const p = pct(t);
+      const h = big ? 'h-2.5' : 'h-2';
+      return `
+        <div class="flex items-center gap-3 ${big ? 'text-sm' : 'text-xs'}">
+          <span class="inline-flex items-center gap-1 text-up font-semibold"><i data-lucide="thumbs-up" class="${big?'h-4 w-4':'h-3.5 w-3.5'}"></i>${t.up}</span>
+          <div class="flex-1 ${h} rounded-full bg-down/30 overflow-hidden">
+            <div class="${h} rounded-full bg-up" style="width:${p}%"></div>
+          </div>
+          <span class="inline-flex items-center gap-1 text-down font-semibold">${t.down}<i data-lucide="thumbs-down" class="${big?'h-4 w-4':'h-3.5 w-3.5'}"></i></span>
+        </div>
+        <div class="mt-1 ${big?'text-xs':'text-[11px]'} text-slate-400">${p}% agree</div>`;
+    }
+
+    function card(t) {
+      return `
+      <article onclick="openModal(${t.id})" class="group cursor-pointer rounded-2xl border border-edge bg-surface/60 card p-4 hover:border-brand/50 hover:-translate-y-0.5 transition">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full ${cat[t.category]}">${t.category}</span>
+          <span class="text-xs text-slate-500">${t.source} · ${t.age}</span>
+        </div>
+        <div class="flex gap-3">
+          <div class="shrink-0 h-16 w-16 rounded-xl bg-gradient-to-br from-surface2 to-edge grid place-items-center text-slate-600">
+            <i data-lucide="image" class="h-5 w-5"></i>
+          </div>
+          <h3 class="font-semibold leading-snug text-slate-100 group-hover:text-white">${t.title}</h3>
+        </div>
+        <div class="mt-4">${voteBar(t)}</div>
+        <div class="mt-3 flex items-center gap-1 text-xs text-slate-400">
+          <i data-lucide="message-circle" class="h-3.5 w-3.5"></i> ${t.comments} comments
+        </div>
+      </article>`;
+    }
+
+    function openModal(id) {
+      const t = topics.find(x => x.id === id);
+      document.getElementById('modalBody').innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <button onclick="closeModal()" class="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white">
+            <i data-lucide="arrow-left" class="h-4 w-4"></i> Back to feed
+          </button>
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full ${cat[t.category]}">${t.category}</span>
+        </div>
+        <div class="text-xs text-slate-500 mb-2">${t.source} · ${t.age}</div>
+        <h2 class="text-2xl font-bold text-white leading-tight">${t.title}</h2>
+        <div class="mt-4 flex gap-4">
+          <div class="shrink-0 h-24 w-24 rounded-xl bg-gradient-to-br from-surface2 to-edge grid place-items-center text-slate-600"><i data-lucide="image" class="h-6 w-6"></i></div>
+          <div>
+            <p class="text-slate-300">${t.summary}</p>
+            <a href="#" class="mt-2 inline-flex items-center gap-1 text-brand text-sm hover:underline">Read full article <i data-lucide="external-link" class="h-3.5 w-3.5"></i></a>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center gap-3">
+          <button class="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-up/15 text-up border border-up/40 font-semibold hover:bg-up/25"><i data-lucide="thumbs-up" class="h-5 w-5"></i> Up ${t.up}</button>
+          <button class="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-down/10 text-down border border-down/30 font-semibold hover:bg-down/20"><i data-lucide="thumbs-down" class="h-5 w-5"></i> Down ${t.down}</button>
+        </div>
+        <div class="mt-3">${voteBar(t, true)}</div>
+        <div class="mt-6 border-t border-edge pt-4">
+          <div class="text-sm font-semibold text-slate-300 mb-3">Comments (${t.comments})</div>
+          <div class="flex gap-2 mb-4">
+            <input placeholder="Write a comment..." class="flex-1 rounded-lg bg-ink border border-edge px-3 py-2 text-sm focus:outline-none focus:border-brand" />
+            <button class="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium">Post</button>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="flex gap-2"><div class="h-7 w-7 rounded-full bg-brand/30 grid place-items-center text-xs font-bold text-brand">A</div><div><span class="font-medium text-slate-200">alice</span> <span class="text-slate-500 text-xs">· 1h</span><p class="text-slate-300">Honestly didn't see this coming, big if true.</p></div></div>
+            <div class="flex gap-2"><div class="h-7 w-7 rounded-full bg-emerald-500/30 grid place-items-center text-xs font-bold text-emerald-300">B</div><div><span class="font-medium text-slate-200">bob</span> <span class="text-slate-500 text-xs">· 40m</span><p class="text-slate-300">Source seems solid, curious how it plays out.</p></div></div>
+          </div>
+        </div>`;
+      const m = document.getElementById('modal');
+      m.classList.remove('hidden'); m.classList.add('flex');
+      lucide.createIcons();
+    }
+    function closeModal() {
+      const m = document.getElementById('modal');
+      m.classList.add('hidden'); m.classList.remove('flex');
+    }
+    document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+    // tab toggle (visual only)
+    document.getElementById('tabs').addEventListener('click', e => {
+      if (!e.target.classList.contains('tab')) return;
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('tab-active'));
+      e.target.classList.add('tab-active');
+    });
+
+    document.getElementById('feed').innerHTML = topics.map(card).join('');
+    lucide.createIcons();
+
+    // allow auto-opening a topic for screenshots: ?topic=1
+    const qp = new URLSearchParams(location.search).get('topic');
+    if (qp) openModal(Number(qp));
+  </script>
+</body>
+</html>
