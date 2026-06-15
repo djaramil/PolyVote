@@ -7,15 +7,23 @@ export function useTopics() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchTopics()
-      .then((data) => {
-        setTopics(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        setLoading(false);
-      });
+    const loadTopics = () => {
+      fetchTopics()
+        .then((data) => {
+          setTopics(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err);
+          setLoading(false);
+        });
+    };
+
+    loadTopics();
+
+    const interval = setInterval(loadTopics, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return { topics, loading, error };
