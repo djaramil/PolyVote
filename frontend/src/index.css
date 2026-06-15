@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: radial-gradient(1200px 600px at 80% -10%, #1a1340 0%, #0B0F14 55%);
+  }
+  
+  .card {
+    backdrop-filter: blur(8px);
+  }
+  
+  .tab-active {
+    background: rgba(124, 92, 252, 0.15);
+    color: #C9BdfF;
+    border-color: rgba(124, 92, 252, 0.5);
+  }
+  
+  ::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #243044;
+    border-radius: 8px;
+  }
+}
