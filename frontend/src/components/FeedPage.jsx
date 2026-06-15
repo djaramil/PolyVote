@@ -1,6 +1,25 @@
 import TopicCard from './TopicCard';
+import { useTopics } from '../hooks/useTopics';
 
-export default function FeedPage({ topics, onTopicClick }) {
+export default function FeedPage({ onTopicClick }) {
+  const { topics, loading, error } = useTopics();
+
+  if (loading) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        <div className="text-center text-slate-400">Loading topics...</div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        <div className="text-center text-red-400">Error loading topics: {error.message}</div>
+      </main>
+    );
+  }
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-6">
       <div className="flex items-center gap-2 mb-5 text-sm">
