@@ -1,3 +1,4 @@
+import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import FeedPage from './components/FeedPage';
 
@@ -7,10 +8,12 @@ function App() {
   };
 
   return (
-    <div className="font-sans text-slate-200 min-h-screen antialiased">
-      <Navbar />
-      <FeedPage onTopicClick={handleTopicClick} />
-    </div>
+    <AuthProvider>
+      <div className="font-sans text-slate-200 min-h-screen antialiased">
+        <Navbar />
+        <FeedPage onTopicClick={handleTopicClick} />
+      </div>
+    </AuthProvider>
   );
 }
 
