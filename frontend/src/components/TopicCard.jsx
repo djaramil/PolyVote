@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Image, MessageCircle } from 'lucide-react';
 import VoteBar from './VoteBar';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,6 +18,11 @@ export default function TopicCard({ topic, onClick, onVoteUpdate }) {
   const [localTopic, setLocalTopic] = useState(topic);
   const [userVotedDirection, setUserVotedDirection] = useState(null);
   const [voting, setVoting] = useState(false);
+
+  // Sync local state with prop changes from polling
+  useEffect(() => {
+    setLocalTopic(topic);
+  }, [topic]);
 
   const handleVote = async (direction) => {
     if (!user) {
